@@ -1,5 +1,7 @@
 # 🇺🇸 US Import Opportunity Scout
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]([https://import-scout-example.streamlit.app](https://import-opportunity-scout-czvcy5dwfmocqpt2bmrffd.streamlit.app/))
+
 A real-time data dashboard built with **Streamlit** and **Python** that helps entrepreneurs and investors identify high-growth import categories entering the USA.
 
 It queries the **US Census Bureau International Trade API** to find products with explosive Year-over-Year (YoY) growth, allowing users to filter by industry (HS Chapters) and volume.
