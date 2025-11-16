@@ -1,6 +1,6 @@
 # 🇺🇸 US Import Opportunity Scout
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]([https://import-scout-example.streamlit.app](https://import-opportunity-scout-czvcy5dwfmocqpt2bmrffd.streamlit.app/))
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://import-opportunity-scout-czvcy5dwfmocqpt2bmrffd.streamlit.app/)
 
 A real-time data dashboard built with **Streamlit** and **Python** that helps entrepreneurs and investors identify high-growth import categories entering the USA.
 
