@@ -11,11 +11,10 @@ st.set_page_config(page_title="US Import Trend Hunter", layout="wide")
 @st.cache_data
 def fetch_census_data(year, months):
     base_url = "https://api.census.gov/data/timeseries/intltrade/imports/hs"
-    hs_level = "HS4" # 4-Digit HS Codes
+    hs_level = "HS4" 
     
     all_data = []
     
-    # Display a progress bar in the UI
     progress_text = f"Fetching data for {year}..."
     my_bar = st.progress(0, text=progress_text)
     
@@ -26,19 +25,27 @@ def fetch_census_data(year, months):
             'time': time_str,
             'COMM_LVL': hs_level,
         }
+        
+        # --- DEBUGGING START ---
         try:
             r = requests.get(base_url, params=params)
-            if r.status_code == 200:
-                data = r.json()
-                df = pd.DataFrame(data[1:], columns=data[0])
-                all_data.append(df)
-        except:
-            pass
+            
+            # If we get a specific error code, print it to the UI
+            if r.status_code != 200:
+                st.error(f"⚠️ Error fetching {time_str}: Status {r.status_code} - {r.text}")
+                continue # Skip this month and try the next
+                
+            data = r.json()
+            df = pd.DataFrame(data[1:], columns=data[0])
+            all_data.append(df)
+            
+        except Exception as e:
+            st.error(f"⚠️ Connection Error on {time_str}: {str(e)}")
+        # --- DEBUGGING END ---
         
-        # Update progress bar
         my_bar.progress((i + 1) / len(months), text=progress_text)
 
-    my_bar.empty() # Clear bar when done
+    my_bar.empty() 
 
     if not all_data:
         return pd.DataFrame()
@@ -46,7 +53,6 @@ def fetch_census_data(year, months):
     full_df = pd.concat(all_data)
     full_df['I_GEN_VAL_MO'] = pd.to_numeric(full_df['I_GEN_VAL_MO'])
     
-    # Aggregate by Code and Description
     aggregated = full_df.groupby(['I_COMMODITY', 'I_COMMODITY_SDESC'])['I_GEN_VAL_MO'].sum().reset_index()
     return aggregated
 
