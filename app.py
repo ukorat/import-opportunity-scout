@@ -21,7 +21,7 @@ def fetch_census_data(year, months):
     for i, month in enumerate(months):
         time_str = f"{year}-{month}"
         params = {
-            'get': 'I_GEN_VAL_MO,I_COMMODITY_SDESC',
+            'get': 'GEN_VAL_MO,I_COMMODITY_SDESC',
             'time': time_str,
             'COMM_LVL': hs_level,
         }
@@ -51,9 +51,9 @@ def fetch_census_data(year, months):
         return pd.DataFrame()
 
     full_df = pd.concat(all_data)
-    full_df['I_GEN_VAL_MO'] = pd.to_numeric(full_df['I_GEN_VAL_MO'])
+    full_df['GEN_VAL_MO'] = pd.to_numeric(full_df['GEN_VAL_MO'])
     
-    aggregated = full_df.groupby(['I_COMMODITY', 'I_COMMODITY_SDESC'])['I_GEN_VAL_MO'].sum().reset_index()
+    aggregated = full_df.groupby(['I_COMMODITY', 'I_COMMODITY_SDESC'])['GEN_VAL_MO'].sum().reset_index()
     return aggregated
 
 # --- SIDEBAR CONTROLS ---
@@ -91,8 +91,8 @@ with col2:
 
 if not df_curr.empty and not df_prev.empty:
     # Rename and Merge
-    df_curr.rename(columns={'I_GEN_VAL_MO': 'Value_Current'}, inplace=True)
-    df_prev.rename(columns={'I_GEN_VAL_MO': 'Value_Prior'}, inplace=True)
+    df_curr.rename(columns={'GEN_VAL_MO': 'Value_Current'}, inplace=True)
+    df_prev.rename(columns={'GEN_VAL_MO': 'Value_Prior'}, inplace=True)
     
     merged = pd.merge(df_curr, df_prev[['I_COMMODITY', 'Value_Prior']], on='I_COMMODITY', how='inner')
     
