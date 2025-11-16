@@ -24,6 +24,7 @@ def fetch_census_data(year, months):
             'get': 'GEN_VAL_MO,I_COMMODITY_SDESC',
             'time': time_str,
             'COMM_LVL': hs_level,
+            'I_COMMODITY': '*'
         }
         
         # --- DEBUGGING START ---
