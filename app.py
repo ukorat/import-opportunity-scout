@@ -38,6 +38,7 @@ def fetch_census_data(year, months):
                 
             data = r.json()
             df = pd.DataFrame(data[1:], columns=data[0])
+            df = df.loc[:, ~df.columns.duplicated()]
             all_data.append(df)
             
         except Exception as e:
