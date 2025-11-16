@@ -6,8 +6,7 @@ import plotly.express as px
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="US Import Trend Hunter", layout="wide")
 
-# --- HS CHAPTERS (The "100 Categories") ---
-# This dictionary maps the display name to the 2-digit HS prefix
+# --- HS CHAPTERS ---
 HS_CHAPTERS = {
     "All Chapters": "ALL",
     "01 - Live animals": "01",
@@ -168,7 +167,6 @@ else:
     target_months = ["07", "08", "09"]
 
 st.sidebar.header("2. Category Filter")
-# Updated to show the full list of 99 Chapters
 selected_chapter_name = st.sidebar.selectbox("Filter by HS Chapter", options=list(HS_CHAPTERS.keys()))
 selected_chapter_code = HS_CHAPTERS[selected_chapter_name]
 
@@ -202,10 +200,7 @@ if not df_curr.empty and not df_prev.empty:
     merged = pd.merge(df_curr, df_prev[['I_COMMODITY', 'Value_Prior']], on='I_COMMODITY', how='inner')
     
     # --- CHAPTER FILTERING LOGIC ---
-    # 1. Extract the first 2 digits of the commodity code
     merged['Chapter_Code'] = merged['I_COMMODITY'].str[:2]
-    
-    # 2. Filter based on selection
     if selected_chapter_code != "ALL":
         merged = merged[merged['Chapter_Code'] == selected_chapter_code].copy()
     
@@ -245,10 +240,24 @@ if not df_curr.empty and not df_prev.empty:
             fig_bar.update_layout(yaxis={'categoryorder':'total ascending'})
             st.plotly_chart(fig_bar, use_container_width=True)
             
+            # --- DATA TABLE & DOWNLOAD BUTTON ---
+            st.write("### 📋 Detailed Data")
             st.dataframe(
                 top_growers[['I_COMMODITY', 'I_COMMODITY_SDESC', 'Market_Size_($M)', 'Growth_%', 'Type']]
                 .style.format({'Market_Size_($M)': "${:.2f}M", 'Growth_%': "{:.1f}%"})
             )
+            
+            # PREPARE CSV
+            # We export 'filtered' (all matches) so the user gets more than just the top 20
+            csv_data = filtered[['I_COMMODITY', 'I_COMMODITY_SDESC', 'Value_Current', 'Value_Prior', 'Growth_%', 'Type']].to_csv(index=False).encode('utf-8')
+            
+            st.download_button(
+                label="📥 Download Full Report (CSV)",
+                data=csv_data,
+                file_name=f'import_opps_{selected_chapter_code}_{current_year}.csv',
+                mime='text/csv',
+            )
+            
         else:
             st.warning(f"No items found in Chapter {selected_chapter_code} matching your filters.")
     else:
